@@ -23,7 +23,7 @@
       [0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0],
     ];
-    let curDiscIsBlack = true;
+    let curColorValue = 1;
     // 棋盘容器
     const container = document.getElementById("container");
 
@@ -35,11 +35,10 @@
         // 绑定点击
         grid.addEventListener("click", () => {
           if (!board[y][x]) {
-            const curValue = curDiscIsBlack ? 1 : 2;
-            const curColor = curDiscIsBlack ? 'black' : 'antiquewhite';
+            const curColor = (curColorValue === 1) ? 'black' : 'antiquewhite';
 
-            board[y][x] = curValue;
-            curDiscIsBlack = !curDiscIsBlack;
+            board[y][x] = curColorValue;
+            curColorValue = 3 - curColorValue; // switch bewteen 1 and 2
 
             const disc = document.createElement("div");
             disc.style = `margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: ${curColor};`

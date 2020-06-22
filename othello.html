@@ -26,44 +26,80 @@
     let curColorValue = 1;
     // 棋盘容器
     const container = document.getElementById("container");
+    render();
 
-    for (let y = 0; y < 8; y++) {
-      for (let x = 0; x < 8; x++) {
-        // 棋盘格
-        const grid = document.createElement("div");
-        grid.style = "display: inline-block; width: 50px; height: 50px; background-color: darkcyan; border: solid white 1px; vertical-align: bottom;";
-        // 绑定点击
-        grid.addEventListener("click", () => {
-          if (!board[y][x]) {
-            const curColor = (curColorValue === 1) ? 'black' : 'antiquewhite';
+    function render() {
+      // 清空旧的
+      container.innerHTML = '';
 
-            board[y][x] = curColorValue;
-            curColorValue = 3 - curColorValue; // switch bewteen 1 and 2
+      for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+          // 棋盘格
+          const grid = document.createElement("div");
+          grid.style = "display: inline-block; width: 50px; height: 50px; background-color: darkcyan; border: solid white 1px; vertical-align: bottom;";
 
+          // 绑定点击
+          grid.addEventListener("click", () => {
+            if (!board[y][x]) {
+              const curColor = (curColorValue === 1) ? 'black' : 'antiquewhite';
+
+              // board[y][x] = curColorValue;
+              // curColorValue = 3 - curColorValue; // switch bewteen 1 and 2
+
+              const disc = document.createElement("div");
+              disc.style = `margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: ${curColor};`
+              grid.appendChild(disc);
+              console.log(x, y, curColor);
+
+              let originalX = x, originalY = y;
+              let hasOpposite = false;
+              let canCapture = false;
+              while (--x > 0) {// >=
+                if (board[y][x] === 3 - curColorValue) {
+                  hasOpposite = true;
+                }
+                if (board[y][x] === curColorValue) {
+                  if (hasOpposite) {
+                    canCapture = true;
+                  }
+                  break;
+                }
+                if (board[y][x] === 0) {
+                  break;
+                }
+              }
+              // 吃子
+              if (canCapture) {
+                while (++x <= originalX) {
+                  board[y][x] = curColorValue;
+                }
+                // board[y][x] = curColorValue;
+                curColorValue = 3 - curColorValue; // switch bewteen 1 and 2
+                // render(); 为什么在这里不行
+              }
+              render();
+            }
+          });
+
+          container.appendChild(grid);
+          // 棋子 css 伪元素？
+          if (board[y][x] === 1) {
             const disc = document.createElement("div");
-            disc.style = `margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: ${curColor};`
-            grid.appendChild(disc);
-            console.log(x, y, curColor);
+            disc.style = "margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: black;"
+            grid.appendChild(disc)
           }
-        });
-
-        container.appendChild(grid);
-        // 棋子 css 伪元素？
-        if (board[y][x] === 1) {
-          const disc = document.createElement("div");
-          disc.style = "margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: black;"
-          grid.appendChild(disc)
-        }
-        if (board[y][x] === 2) {
-          const disc = document.createElement("div");
-          disc.style = "margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: antiquewhite;"
-          grid.appendChild(disc)
-        }
+          if (board[y][x] === 2) {
+            const disc = document.createElement("div");
+            disc.style = "margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: antiquewhite;"
+            grid.appendChild(disc)
+          }
+        };
+        // 分行
+        container.appendChild(document.createElement("br"));
       };
-      // 分行
-      // container.appendChild(<br />)
-      container.appendChild(document.createElement("br"));
-    };
+    }
+
+
   </script>
 </body>
 

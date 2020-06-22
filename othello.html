@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Othello</title>
+</head>
+
+<body>
+  <div id="container"></div>
+  <script>
+    // 用数据结构表示棋盘信息
+    let board = [
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 1, 2, 0, 0, 0],
+      [0, 0, 0, 2, 1, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+    // 棋盘容器
+    const container = document.getElementById("container");
+
+    for (let y = 0; y < 8; y++) {
+      for (let x = 0; x < 8; x++) {
+        // 棋盘格
+        const grid = document.createElement("div");
+        grid.style = "display: inline-block; width: 50px; height: 50px; background-color: darkcyan; border: solid white 1px; vertical-align: bottom;";
+        container.appendChild(grid);
+        // 棋子 css 伪元素？
+        if (board[y][x] === 1) {
+          const disc = document.createElement("div");
+          disc.style = "margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: black;"
+          grid.appendChild(disc)
+        }
+        if (board[y][x] === 2) {
+          const disc = document.createElement("div");
+          disc.style = "margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: antiquewhite;"
+          grid.appendChild(disc)
+        }
+      };
+      // 分行
+      // container.appendChild(<br />)
+      container.appendChild(document.createElement("br"));
+    };
+  </script>
+</body>
+
+</html>

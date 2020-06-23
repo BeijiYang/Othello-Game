@@ -118,6 +118,42 @@
       return true;
     }
 
+    function judge() {
+      // // 得到一个包含所有非0结果的数组
+      // board.reduce((acc, line) => (
+      //   [...acc, ...(line.filter(grid => grid !== 0))]
+      // ), [])
+      // // 得到两个分别是 1 与 2 的数组
+      // board.reduce(([black, white], line) => {
+      //   const [curBlack, curWhite] = line.reduce(([b, w], grid) => {
+      //     if (grid === 1) b = [...b, grid];
+      //     if (grid === 2) w = [...w, grid];
+      //     return [b, w]
+      //   }, [[], []])
+      //   return [[...black, ...curBlack], [...white, ...curWhite]];
+      // }, [[], []])
+      // 得到黑白棋子分别的个数
+      const [black, white] = board.reduce(([black, white], line) => {
+        const [curB, curW] = line.reduce(([b, w], grid) => {
+          if (grid === 1)++b;
+          if (grid === 2)++w;
+          return [b, w];
+        }, [0, 0]);
+
+        return [black += curB, white += curW]
+      }, [0, 0])
+
+      let result;
+      if (black > white) {
+        result = 'black wins';
+      } else if (black < white) {
+        result = 'white wins';
+      } else {
+        result = "draw";
+      }
+      alert(`Black: ${black}, white: ${white}. The result is ${result}`);
+    }
+
     function render() {
       // 清空旧的
       container.innerHTML = '';
@@ -139,6 +175,8 @@
               if (checkPass()) {
                 // 连着 pass 两次，双方都没得走了，gameover
                 console.log('game over')
+                // judge();
+                setTimeout(judge, 100);
               }
             }
             // move(x, y);

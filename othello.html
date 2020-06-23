@@ -40,27 +40,50 @@
 
           // 绑定点击
           grid.addEventListener("click", () => {
-            if (!board[y][x]) {
-              const curColor = (curColorValue === 1) ? 'black' : 'antiquewhite';
+            if (board[y][x]) return;
 
-              // board[y][x] = curColorValue;
-              // curColorValue = 3 - curColorValue; // switch bewteen 1 and 2
+            const curColor = (curColorValue === 1) ? 'black' : 'antiquewhite';
+            const disc = document.createElement("div");
+            disc.style = `margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: ${curColor};`
+            grid.appendChild(disc);
+            console.log(x, y, curColor);
 
-              const disc = document.createElement("div");
-              disc.style = `margin: 5px; width: 40px; height: 40px; border-radius: 20px; background-color: ${curColor};`
-              grid.appendChild(disc);
-              console.log(x, y, curColor);
+            let originalX = x, originalY = y;
+            // 类似的逻辑在 8 个方向上，为了不重复 8 次，用把逻辑抽象出来
+            // 处理几何相关问题时常用向量思想
+            const directions = [
+              [0, -1],
+              [0, 1],
+              [-1, 0],
+              [1, 0],
+              [-1, -1],
+              [1, -1],
+              [1, 1],
+              [-1, 1]
+            ];
 
-              let originalX = x, originalY = y;
-              let hasOpposite = false;
-              let canCapture = false;
-              while (--x > 0) {// >=
+            let canCapture = false;
+            // 八个方向 while true +  break
+            for (const direction of directions) {
+              x = originalX; // 每个方向的判断开始时都需要重置 x y 值
+              y = originalY;
+              let directionCanCapture = false;
+              let directionHasOpposite = false;
+              // 开始每个方向的判断
+              while (true) {
+                x += direction[0];
+                y += direction[1];
+                // 出界
+                if (x < 0 || x > 7 || y < 0 || y > 7) {
+                  break;
+                }
+                // 找能吃的子
                 if (board[y][x] === 3 - curColorValue) {
-                  hasOpposite = true;
+                  directionHasOpposite = true;
                 }
                 if (board[y][x] === curColorValue) {
-                  if (hasOpposite) {
-                    canCapture = true;
+                  if (directionHasOpposite) {
+                    directionCanCapture = true;
                   }
                   break;
                 }
@@ -68,17 +91,25 @@
                   break;
                 }
               }
-              // 吃子
-              if (canCapture) {
-                while (++x <= originalX) {
+              // 上一个 while 可能找出了该方向上能吃的点
+              if (directionCanCapture) {
+                while (true) { // 类似的，如果能吃，现在在远端同色点，必须先退一步到异色点，才能吃子改色。先变 x 再用其值，所以while true => x+=n => 判断 x => 用x值操作
+                  x -= direction[0];
+                  y -= direction[1];
+                  if (x === originalX && y === originalY) {
+                    break;
+                  }
                   board[y][x] = curColorValue;
                 }
-                // board[y][x] = curColorValue;
-                curColorValue = 3 - curColorValue; // switch bewteen 1 and 2
-                // render(); 为什么在这里不行
+                // 点击位置的落子不能放在循环中的单方向操作中了，否则会重复操作。拎出来，如果任一方向能吃子，单独进行落子操作。
+                canCapture = canCapture || directionCanCapture;
               }
-              render();
             }
+            if (canCapture) {
+              board[originalY][originalX] = curColorValue;
+              curColorValue = 3 - curColorValue; // switch bewteen 1 and 2 
+            }
+            render();
           });
 
           container.appendChild(grid);
